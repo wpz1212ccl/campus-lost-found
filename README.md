@@ -1,63 +1,146 @@
-# 民大失物招领系统
+<p align="center">
+  <img src="docs/screenshots/logo.png" width="120" alt="Logo"/>
+</p>
 
-## 统计功能说明
+<h1 align="center">校园失物招领系统</h1>
 
-### 1. 统计数据存储说明
+<p align="center">
+  <b>Campus Lost & Found System</b><br/>
+  基于 Express + Vue 3 的全栈校园失物招领平台
+</p>
 
-根据您的第一个问题，关于是否需要新建数据库表来存储统计数据，我们采用的方案是：**不需要新建专门的统计数据表**，而是通过后端代码函数直接从现有的数据表中实时计算统计数据。
+---
 
-这种方式的优势：
-- 无需维护额外的统计表，减少数据库复杂度
-- 确保统计数据始终是最新的，无需定期同步
-- 节省存储空间
-- 实现简单，逻辑清晰
+## 产品展示
 
-### 2. 统计功能实现
+<table>
+  <tr>
+    <td align="center"><img src="docs/screenshots/homepage.png" width="400"/></td>
+    <td align="center"><img src="docs/screenshots/admin.png" width="400"/></td>
+  </tr>
+  <tr>
+    <td align="center">失物招领信息浏览</td>
+    <td align="center">后台管理</td>
+  </tr>
+  <tr>
+    <td align="center" colspan="2"><img src="docs/screenshots/analytics.png" width="500"/></td>
+  </tr>
+  <tr>
+    <td align="center" colspan="2">数据可视化统计</td>
+  </tr>
+</table>
 
-系统当前实现了以下统计功能：
+---
 
-#### 2.1 失物数量统计
+## 核心特性
 
-在主页和失物招领仓库页面显示以下统计数据：
-- 总失物数量
-- 未认领失物数量
-- 已认领失物数量
+- **失物信息发布** — 发布者可上传图片、描述物品特征、选择丢失地点
+- **招领信息管理** — 拾获者发布招领，失主可快速匹配
+- **后台管理系统** — 管理员审核、删除、管理所有信息
+- **数据可视化** — 饼图、折线图、柱状图展示丢失/招领趋势
+- **搜索与筛选** — 按关键词、日期范围、信息状态筛选
+- **文件上传** — 支持图片上传，本地存储
+- **用户认证** — 登录注册、角色权限区分
 
-后端实现方式（SQL查询）：
-```sql
--- 获取失物数量统计
-SELECT 
-  COUNT(*) as total, 
-  SUM(CASE WHEN claimed = 0 THEN 1 ELSE 0 END) as unclaimed, 
-  SUM(CASE WHEN claimed = 1 THEN 1 ELSE 0 END) as claimed 
-FROM founder;
+---
+
+## 技术栈
+
+| 层级 | 技术 | 用途 |
+|------|------|------|
+| **后端** | Express.js | RESTful API 服务 |
+| **数据库** | MySQL | 数据持久化 |
+| **前端框架** | Vue 3 + Vite | 响应式 UI |
+| **UI 组件库** | Element Plus | 表单、表格、弹窗等组件 |
+| **图表** | ECharts | 数据可视化 |
+| **状态管理** | Pinia | 全局状态 |
+| **样式** | TailwindCSS | 原子化 CSS |
+| **路由** | Vue Router | 前端路由 |
+| **HTTP** | Axios | 前后端通信 |
+
+---
+
+## 项目结构
+
+```
+campus-lost-found/
+├── src/                    # 后端源码
+│   ├── config/             # 数据库、上传配置
+│   ├── controllers/        # 业务逻辑控制器
+│   ├── middleware/          # 中间件（错误处理、日志、上传）
+│   ├── routes/             # API 路由定义
+│   └── utils/              # 工具函数
+├── frontend/               # 前端 Vue 3 项目
+│   └── src/
+│       ├── api/            # 接口封装
+│       ├── config/         # 后端地址配置
+│       ├── router/         # 路由配置
+│       ├── store/          # Pinia 状态
+│       └── views/          # 页面组件
+├── public/                 # 静态资源
+├── app.js                  # Express 入口
+└── package.json
 ```
 
-#### 2.2 挂失物品数量统计
+---
 
-在挂失公告页面显示：
-- 总挂失物品数量
+## 快速开始
 
-后端实现方式（SQL查询）：
-```sql
--- 获取挂失物品总数
-SELECT COUNT(*) as total FROM loster;
+### 环境要求
+
+- Node.js >= 16
+- MySQL >= 5.7
+
+### 安装与运行
+
+```bash
+# 克隆项目
+git clone https://github.com/wpz1212ccl/campus-lost-found.git
+cd campus-lost-found
+
+# 后端
+npm install
+cp .env.example .env        # 配置数据库连接
+npm run dev                 # 启动后端 (端口 3000)
+
+# 前端
+cd frontend
+npm install
+npm run dev                 # 启动前端 (端口 5173)
 ```
 
-### 3. 实时更新机制
+### 环境变量 (.env)
 
-统计数据的实时更新通过以下方式实现：
-- 每次页面加载时，前端会向后端发送请求获取最新的统计数据
-- 当新的物品被添加、认领或删除时，刷新页面即可看到最新的统计结果
+```env
+DB_HOST=localhost
+DB_USER=root
+DB_PASSWORD=your_password
+DB_NAME=lost_and_found
+PORT=3000
+```
 
-### 4. 统计令牌样式
+---
 
-为了保持界面的统一性和美观性，统计令牌采用了以下设计风格：
-- 简洁的卡片式设计，白色背景，圆角，轻微阴影
-- 主色调为深蓝色（#1a237e），与系统整体风格一致
-- 悬停时的微动画效果，提升用户体验
-- 响应式设计，在不同设备上都能良好显示
+## API 接口
 
-## 后续开发计划
+| 方法 | 路径 | 说明 |
+|------|------|------|
+| GET | /api/founder | 获取招领列表 |
+| POST | /api/founder | 发布招领信息 |
+| GET | /api/loster | 获取失物列表 |
+| POST | /api/loster | 发布失物信息 |
+| POST | /api/admin/login | 管理员登录 |
+| GET | /api/admin/list | 管理员获取全部信息 |
+| POST | /api/upload | 上传图片 |
 
-根据您的需求，接下来我们将实现管理员入口页面的数据可视化窗口，提供更丰富的数据统计和展示功能。
+---
+
+## 关于开发者
+
+**PgStar** — AI Product & Mobile App Developer
+
+---
+
+## License
+
+MIT License
